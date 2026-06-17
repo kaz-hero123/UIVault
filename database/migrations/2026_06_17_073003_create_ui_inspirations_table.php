@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('ui_inspirations', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('title')->nullable();
             $table->string('image_path');
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('status',20)->default('inbox');
