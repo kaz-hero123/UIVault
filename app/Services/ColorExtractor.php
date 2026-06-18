@@ -8,6 +8,7 @@ use RuntimeException;
 class ColorExtractor
 {
     private const THUMBNAIL_SIZE = 60;
+
     private const QUANTIZE_STEP = 32;
 
     /**
@@ -29,7 +30,6 @@ class ColorExtractor
 
         $buckets = $this->countColorBuckets($thumbnail);
 
-
         if (empty($buckets)) {
             return [];
         }
@@ -40,7 +40,6 @@ class ColorExtractor
 
         return array_map(fn (string $key) => $this->bucketKeyToHex($key), $topColors);
     }
-
 
     private function createImageResource(string $path): ?GdImage
     {
@@ -54,18 +53,16 @@ class ColorExtractor
             return null;
         }
 
-
         $image = match ($imageInfo[2]) {
             IMAGETYPE_JPEG => imagecreatefromjpeg($path),
-            IMAGETYPE_PNG  => imagecreatefrompng($path),
-            IMAGETYPE_GIF  => imagecreatefromgif($path),
+            IMAGETYPE_PNG => imagecreatefrompng($path),
+            IMAGETYPE_GIF => imagecreatefromgif($path),
             IMAGETYPE_WEBP => imagecreatefromwebp($path),
-            default        => false,
+            default => false,
         };
 
         return $image instanceof GdImage ? $image : null;
     }
-
 
     private function resizeToThumbnail(GdImage $source): ?GdImage
     {
@@ -94,7 +91,6 @@ class ColorExtractor
         return $thumbnail;
     }
 
-
     private function countColorBuckets(GdImage $thumbnail): array
     {
         $buckets = [];
@@ -110,8 +106,8 @@ class ColorExtractor
                 }
 
                 $bucketKey = $this->quantize($colors['red'])
-                    . '-' . $this->quantize($colors['green'])
-                    . '-' . $this->quantize($colors['blue']);
+                    .'-'.$this->quantize($colors['green'])
+                    .'-'.$this->quantize($colors['blue']);
 
                 $buckets[$bucketKey] = ($buckets[$bucketKey] ?? 0) + 1;
             }
@@ -120,12 +116,10 @@ class ColorExtractor
         return $buckets;
     }
 
-
     private function quantize(int $channelValue): int
     {
         return intdiv($channelValue, self::QUANTIZE_STEP) * self::QUANTIZE_STEP;
     }
-
 
     private function bucketKeyToHex(string $bucketKey): string
     {
