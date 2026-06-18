@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->string('image_path');
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('cascade');
-            $table->string('status',20)->default('inbox');
+            $table->string('status', 20)->default('inbox');
             $table->boolean('is_favorite')->default(false);
             $table->text('notes')->nullable();
-            $table->string('source_url',512)->nullable();
+            $table->string('source_url', 512)->nullable();
             $table->json('dominant_colors')->nullable();
             $table->timestamps();
         });
