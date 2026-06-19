@@ -31,8 +31,9 @@ class UploadController extends Controller
             $dominantColors = $this->colorExtractor->extract($absolutePath);
 
             $inspiration = UiInspiration::create([
-                'image_path' => $path,
-                'status' => 'inbox',
+                'title'          => null,
+                'image_path'     => $path,
+                'status'         => 'inbox',
                 'dominant_colors' => $dominantColors,
             ]);
 
