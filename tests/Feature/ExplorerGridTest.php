@@ -82,4 +82,25 @@ class ExplorerGridTest extends TestCase
         $item->refresh();
         $this->assertFalse($item->is_favorite);
     }
+
+    public function test_can_delete_inspiration_from_explorer(): void
+    {
+        $item = UiInspiration::factory()->create(['status' => 'sorted']);
+
+        Livewire::test(ExplorerGrid::class)
+            ->call('deleteInspiration', $item->id);
+
+        $this->assertDatabaseMissing('ui_inspirations', ['id' => $item->id]);
+    }
+
+    public function test_can_filter_favorites_only(): void
+    {
+        $fav = UiInspiration::factory()->create(['status' => 'sorted', 'title' => 'Fav Design', 'is_favorite' => true]);
+        $nonFav = UiInspiration::factory()->create(['status' => 'sorted', 'title' => 'Non Fav Design', 'is_favorite' => false]);
+
+        Livewire::test(ExplorerGrid::class)
+            ->set('favoritesOnly', true)
+            ->assertSee('Fav Design')
+            ->assertDontSee('Non Fav Design');
+    }
 }

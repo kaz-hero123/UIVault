@@ -30,8 +30,11 @@ class UploadTest extends TestCase
             'images' => $files,
         ]);
 
-        $response->assertRedirect(route('upload.create'));
-        $response->assertSessionHas('success', '3 gambar berhasil diupload ke Inbox.');
+        $response->assertRedirect(route('inbox'));
+        $response->assertSessionHas('upload_result', [
+            'success_count' => 3,
+            'failed' => [],
+        ]);
 
         $this->assertDatabaseCount('ui_inspirations', 3);
 
@@ -69,7 +72,16 @@ class UploadTest extends TestCase
             'images' => $files,
         ]);
 
-        $response->assertSessionHasErrors(['images.0']);
+        $response->assertRedirect(route('inbox'));
+        $response->assertSessionHas('upload_result', [
+            'success_count' => 0,
+            'failed' => [
+                [
+                    'filename' => 'test.pdf',
+                    'reason' => 'File harus berupa gambar.',
+                ],
+            ],
+        ]);
         $this->assertDatabaseCount('ui_inspirations', 0);
     }
 }

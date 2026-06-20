@@ -19,10 +19,13 @@ class ExplorerGrid extends Component
 
     public ?int $tag_id = null;
 
+    public bool $favoritesOnly = false;
+
     protected $queryString = [
         'search' => ['except' => ''],
         'category_id' => ['except' => null],
         'tag_id' => ['except' => null],
+        'favoritesOnly' => ['except' => false],
     ];
 
     public function updatingSearch()
@@ -40,6 +43,11 @@ class ExplorerGrid extends Component
         $this->resetPage();
     }
 
+    public function updatingFavoritesOnly()
+    {
+        $this->resetPage();
+    }
+
     public function toggleFavorite(int $id): void
     {
         $inspiration = UiInspiration::find($id);
@@ -50,25 +58,38 @@ class ExplorerGrid extends Component
         }
     }
 
+    public function deleteInspiration(int $id): void
+    {
+        $inspiration = UiInspiration::find($id);
+        if ($inspiration) {
+            $inspiration->delete();
+        }
+    }
+
     public function render()
     {
         $query = UiInspiration::sorted();
 
         if (! empty($this->search)) {
-            $column = 'title';
-            $query->where($column, 'like', '%'.$this->search.'%');
+            $colTitle = 'title';
+            $query->where($colTitle, 'like', '%'.$this->search.'%');
         }
 
         if ($this->category_id !== null) {
-            $column = 'category_id';
-            $query->where($column, $this->category_id);
+            $colCategoryId = 'category_id';
+            $query->where($colCategoryId, $this->category_id);
         }
 
         if ($this->tag_id !== null) {
             $query->whereHas('tags', function ($q) {
-                $column = 'tags.id';
-                $q->where($column, $this->tag_id);
+                $colTagsId = 'tags.id';
+                $q->where($colTagsId, $this->tag_id);
             });
+        }
+
+        if ($this->favoritesOnly) {
+            $colIsFavorite = 'is_favorite';
+            $query->where($colIsFavorite, true);
         }
 
         $inspirations = $query->with(['category', 'tags'])->latest()->paginate(12);

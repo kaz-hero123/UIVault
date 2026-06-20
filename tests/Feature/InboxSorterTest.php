@@ -59,4 +59,34 @@ class InboxSorterTest extends TestCase
         $item1->refresh();
         $this->assertEquals('inbox', $item1->status);
     }
+
+    public function test_can_add_category_quick_add(): void
+    {
+        $item = UiInspiration::factory()->create(['status' => 'inbox']);
+
+        Livewire::test(InboxSorter::class)
+            ->set('newCategoryName', 'New Quick Category')
+            ->call('addCategory')
+            ->assertSet('newCategoryName', '')
+            ->assertSet('showAddCategory', false)
+            ->assertSet('category_id', Category::where('slug', 'new-quick-category')->first()->id);
+
+        $this->assertDatabaseHas('categories', [
+            'name' => 'New Quick Category',
+            'slug' => 'new-quick-category',
+        ]);
+    }
+
+    public function test_can_delete_inspiration_from_inbox(): void
+    {
+        $item1 = UiInspiration::factory()->create(['status' => 'inbox', 'created_at' => now()->subDay()]);
+        $item2 = UiInspiration::factory()->create(['status' => 'inbox', 'created_at' => now()]);
+
+        Livewire::test(InboxSorter::class)
+            ->assertSet('current.id', $item1->id)
+            ->call('delete')
+            ->assertSet('current.id', $item2->id);
+
+        $this->assertDatabaseMissing('ui_inspirations', ['id' => $item1->id]);
+    }
 }
