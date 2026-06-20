@@ -31,6 +31,17 @@
                 @endforeach
             </select>
         </div>
+
+        {{-- Favorites Only --}}
+        <div class="flex items-center gap-2 whitespace-nowrap">
+            <input
+                type="checkbox"
+                wire:model.live="favoritesOnly"
+                id="fav-only"
+                class="rounded text-indigo-600 focus:ring-indigo-500 border-gray-300"
+            />
+            <label for="fav-only" class="text-sm text-gray-700 select-none cursor-pointer">Favorites Only</label>
+        </div>
     </div>
 
     {{-- Results Grid --}}
@@ -79,8 +90,14 @@
                                 @endforeach
                             </div>
                             @if($item->source_url)
-                                <a href="{{ $item->source_url }}" target="_blank" class="text-xs text-indigo-600 hover:underline">Source ↗</a>
+                                <a href="{{ $item->source_url }}" target="_blank" class="text-xs text-indigo-650 font-medium hover:underline">Source ↗</a>
                             @endif
+                        </div>
+
+                        {{-- Card Actions: Edit & Delete --}}
+                        <div class="flex justify-between items-center mt-2 pt-2 border-t text-xs">
+                            <a href="{{ route('inspirations.edit', $item->id) }}" class="text-indigo-600 font-semibold hover:text-indigo-850">Edit ✏️</a>
+                            <button type="button" wire:click="deleteInspiration({{ $item->id }})" onclick="return confirm('Apakah Anda yakin ingin menghapus item ini secara permanen?')" class="text-red-600 font-semibold hover:text-red-800">Delete 🗑</button>
                         </div>
                     </div>
                 </div>

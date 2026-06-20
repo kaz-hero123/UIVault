@@ -41,19 +41,38 @@
 
                     {{-- Category --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Category</label>
-                        <select wire:model="category_id" class="mt-1 w-full border border-gray-300 rounded p-2 text-sm">
-                            <option value="">-- Pilih Category --</option>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                            @endforeach
-                        </select>
+                        <div class="flex items-center justify-between">
+                            <label class="block text-sm font-medium text-gray-700">Category</label>
+                            @if(!$showAddCategory)
+                                <button type="button" wire:click="$set('showAddCategory', true)" class="text-xs text-indigo-600 hover:text-indigo-850 font-medium">+ Add New</button>
+                            @endif
+                        </div>
+
+                        @if($showAddCategory)
+                            <div class="mt-1 flex gap-2">
+                                <input type="text" wire:model="newCategoryName" class="w-full border border-gray-300 rounded p-2 text-sm" placeholder="Nama kategori baru..." />
+                                <button type="button" wire:click="addCategory" class="px-3 py-1 bg-indigo-600 text-white rounded text-xs font-semibold hover:bg-indigo-700">Add</button>
+                                <button type="button" wire:click="$set('showAddCategory', false)" class="px-3 py-1 border border-gray-300 text-gray-700 rounded text-xs hover:bg-gray-50">Cancel</button>
+                            </div>
+                        @else
+                            <select wire:model="category_id" class="mt-1 w-full border border-gray-300 rounded p-2 text-sm">
+                                <option value="">-- Pilih Category --</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </div>
 
                     {{-- Tags --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Tags (pisahkan koma)</label>
-                        <input type="text" wire:model="tagsInput" class="mt-1 w-full border border-gray-300 rounded p-2 text-sm" placeholder="dashboard, dark mode, mobile" />
+                        <input type="text" wire:model="tagsInput" list="existing-tags" class="mt-1 w-full border border-gray-300 rounded p-2 text-sm" placeholder="dashboard, dark mode, mobile" />
+                        <datalist id="existing-tags">
+                            @foreach($existingTags as $tag)
+                                <option value="{{ $tag }}"></option>
+                            @endforeach
+                        </datalist>
                     </div>
 
                     {{-- Notes --}}
@@ -70,9 +89,9 @@
 
                     {{-- Favorite Toggle --}}
                     <div class="flex items-center gap-2">
-                        <button type="button" wire:click="toggleFavorite" class="text-sm flex items-center gap-1">
+                        <button type="button" wire:click="toggleFavorite" class="text-sm flex items-center gap-1 font-medium text-gray-700">
                             @if($is_favorite)
-                                <span class="text-yellow-500 text-lg">★</span> <span class="text-gray-700">Favorited</span>
+                                <span class="text-yellow-500 text-lg">★</span> <span class="text-indigo-650">Favorited</span>
                             @else
                                 <span class="text-gray-400 text-lg">☆</span> <span class="text-gray-500">Not Favorite</span>
                             @endif
@@ -81,12 +100,15 @@
 
                     {{-- Actions --}}
                     <div class="flex items-center justify-between pt-3 border-t">
-                        <span class="text-sm text-gray-500">{{ $remainingCount }} item tersisa</span>
+                        <span class="text-sm text-gray-500 font-medium">{{ $remainingCount }} item tersisa</span>
                         <div class="flex gap-2">
-                            <button type="button" wire:click="skip" class="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 bg-white hover:bg-gray-50">
+                            <button type="button" wire:click="delete" onclick="return confirm('Apakah Anda yakin ingin menghapus item ini secara permanen?')" class="px-4 py-2 bg-red-650 text-white rounded text-sm hover:bg-red-700 transition">
+                                Delete 🗑
+                            </button>
+                            <button type="button" wire:click="skip" class="px-4 py-2 border border-gray-300 rounded text-sm text-gray-700 bg-white hover:bg-gray-50 transition">
                                 Skip
                             </button>
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700">
+                            <button type="submit" class="px-4 py-2 bg-indigo-650 text-white rounded text-sm font-medium hover:bg-indigo-700 transition">
                                 Sort ✓
                             </button>
                         </div>
