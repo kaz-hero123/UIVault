@@ -90,7 +90,7 @@ class InboxSorter extends Component
             return;
         }
 
-        $this->current->delete();
+        UiInspiration::destroy($this->current->id);
         $this->resetForm();
         $this->loadNext();
     }
@@ -104,21 +104,22 @@ class InboxSorter extends Component
     public function render()
     {
         $orderCol = 'name';
+        $colName = 'name';
 
         return view('livewire.inbox-sorter', [
-            'categories' => Category::orderBy($orderCol)->get(),
-            'existingTags' => Tag::pluck('name')->toArray(),
+            'categories' => Category::orderBy($orderCol, 'asc')->get(),
+            'existingTags' => Tag::pluck($colName, null)->toArray(),
         ]);
     }
 
     private function loadNext(): void
     {
         $this->current = UiInspiration::inInbox()
-            ->whereNotIn('id', $this->skippedIds)
+            ->whereNotIn('id', $this->skippedIds, 'and')
             ->oldest()
             ->first();
         $this->remainingCount = UiInspiration::inInbox()
-            ->whereNotIn('id', $this->skippedIds)
+            ->whereNotIn('id', $this->skippedIds, 'and')
             ->count();
     }
 

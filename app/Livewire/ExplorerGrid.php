@@ -50,7 +50,7 @@ class ExplorerGrid extends Component
 
     public function toggleFavorite(int $id): void
     {
-        $inspiration = UiInspiration::find($id);
+        $inspiration = UiInspiration::find($id, ['*']);
         if ($inspiration) {
             $inspiration->update([
                 'is_favorite' => ! $inspiration->is_favorite,
@@ -60,7 +60,7 @@ class ExplorerGrid extends Component
 
     public function deleteInspiration(int $id): void
     {
-        $inspiration = UiInspiration::find($id);
+        $inspiration = UiInspiration::find($id, ['*']);
         if ($inspiration) {
             $inspiration->delete();
         }
@@ -96,13 +96,15 @@ class ExplorerGrid extends Component
 
         // Transform results to match the contract in VIEW_CONTRACT.md
         $inspirations->getCollection()->transform(function ($item) {
+            $colName = 'name';
+
             return (object) [
                 'id' => $item->id,
                 'title' => $item->title,
                 'image_url' => Storage::url($item->image_path),
                 'dominant_colors' => $item->dominant_colors ?? [],
                 'category' => $item->category ? $item->category->name : null,
-                'tags' => $item->tags->pluck('name')->toArray(),
+                'tags' => $item->tags->pluck($colName, null)->toArray(),
                 'is_favorite' => (bool) $item->is_favorite,
                 'notes' => $item->notes,
                 'source_url' => $item->source_url,
@@ -113,8 +115,8 @@ class ExplorerGrid extends Component
 
         return view('livewire.explorer-grid', [
             'inspirations' => $inspirations,
-            'categories' => Category::orderBy($orderCol)->get(),
-            'tags' => Tag::orderBy($orderCol)->get(),
+            'categories' => Category::orderBy($orderCol, 'asc')->get(),
+            'tags' => Tag::orderBy($orderCol, 'asc')->get(),
         ]);
     }
 }
