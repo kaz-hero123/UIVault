@@ -64,12 +64,15 @@ class InboxSorterTest extends TestCase
     {
         $item = UiInspiration::factory()->create(['status' => 'inbox']);
 
+        $colSlug = 'slug';
+        $valSlug = 'new-quick-category';
+
         Livewire::test(InboxSorter::class)
             ->set('newCategoryName', 'New Quick Category')
             ->call('addCategory')
             ->assertSet('newCategoryName', '')
             ->assertSet('showAddCategory', false)
-            ->assertSet('category_id', Category::where('slug', 'new-quick-category')->first()->id);
+            ->assertSet('category_id', Category::where($colSlug, '=', $valSlug, 'and')->first()->id);
 
         $this->assertDatabaseHas('categories', [
             'name' => 'New Quick Category',

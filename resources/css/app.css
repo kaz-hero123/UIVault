@@ -4,6 +4,118 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-secondary-container: #d2e8d8;
+    --color-surface-container-low: #f6f3f2;
+    --color-surface-container-high: #eae8e7;
+    --color-on-secondary-fixed: #0d1f15;
+    --color-outline: #74777d;
+    --color-surface-main: #FFFFFF;
+    --color-surface: #fbf9f8;
+    --color-background: #fbf9f8;
+    --color-secondary-fixed-dim: #b7ccbc;
+    --color-on-surface: #1b1c1c;
+    --color-inverse-on-surface: #f3f0f0;
+    --color-on-tertiary-container: #fffbff;
+    --color-surface-tint: #4f6076;
+    --color-outline-variant: #c4c6cd;
+    --color-on-surface-variant: #44474c;
+    --color-tertiary-container: #8b704c;
+    --color-tertiary-fixed: #ffddb2;
+    --color-primary-fixed-dim: #b6c8e1;
+    --color-surface-variant: #e4e2e1;
+    --color-primary-fixed: #d2e4fe;
+    --color-inverse-primary: #b6c8e1;
+    --color-primary-container: #65768d;
+    --color-error: #ba1a1a;
+    --color-on-error: #ffffff;
+    --color-tertiary: #705835;
+    --color-tertiary-fixed-dim: #e2c197;
+    --color-on-error-container: #93000a;
+    --color-border-quiet: #E5E5E5;
+    --color-surface-subtle: #F9F9F9;
+    --color-surface-container-lowest: #ffffff;
+    --color-on-primary-fixed: #0a1c2f;
+    --color-on-tertiary: #ffffff;
+    --color-inverse-surface: #303030;
+    --color-secondary: #506356;
+    --color-on-secondary-fixed-variant: #384b3f;
+    --color-on-primary-container: #fdfcff;
+    --color-surface-container-highest: #e4e2e1;
+    --color-on-background: #1b1c1c;
+    --color-primary: #4c5d73;
+    --color-secondary-fixed: #d2e8d8;
+    --color-on-primary-fixed-variant: #37485d;
+    --color-on-tertiary-fixed: #291800;
+    --color-surface-container: #f0eded;
+    --color-error-container: #ffdad6;
+    --color-on-secondary: #ffffff;
+    --color-surface-dim: #dcd9d9;
+    --color-on-tertiary-fixed-variant: #594322;
+    --color-surface-bright: #fbf9f8;
+    --color-on-primary: #ffffff;
+    --color-on-secondary-container: #56695c;
+
+    --spacing-gutter: 24px;
+    --spacing-stack-gap: 12px;
+    --spacing-margin-desktop: 48px;
+    --spacing-sidebar-width: 260px;
+    --spacing-margin-mobile: 16px;
+
+    --font-inter: 'Inter', sans-serif;
+    --font-body-md: var(--font-inter);
+    --font-headline-lg: var(--font-inter);
+    --font-title-md: var(--font-inter);
+    --font-mono-label: var(--font-inter);
+    --font-headline-lg-mobile: var(--font-inter);
+    --font-display-lg: var(--font-inter);
+    --font-body-lg: var(--font-inter);
+    --font-label-sm: var(--font-inter);
 }
+
+@utility text-body-md { font-size: 14px; line-height: 20px; font-weight: 400; }
+@utility font-body-md { font-family: var(--font-body-md); }
+
+@utility text-headline-lg { font-size: 32px; line-height: 40px; letter-spacing: -0.02em; font-weight: 600; }
+@utility font-headline-lg { font-family: var(--font-headline-lg); }
+
+@utility text-title-md { font-size: 18px; line-height: 24px; font-weight: 500; }
+@utility font-title-md { font-family: var(--font-title-md); }
+
+@utility text-mono-label { font-size: 11px; line-height: 14px; font-weight: 400; }
+@utility font-mono-label { font-family: var(--font-mono-label); }
+
+@utility text-headline-lg-mobile { font-size: 24px; line-height: 32px; letter-spacing: -0.01em; font-weight: 600; }
+@utility font-headline-lg-mobile { font-family: var(--font-headline-lg-mobile); }
+
+@utility text-display-lg { font-size: 40px; line-height: 48px; letter-spacing: -0.02em; font-weight: 600; }
+@utility font-display-lg { font-family: var(--font-display-lg); }
+
+@utility text-body-lg { font-size: 16px; line-height: 24px; font-weight: 400; }
+@utility font-body-lg { font-family: var(--font-body-lg); }
+
+@utility text-label-sm { font-size: 12px; line-height: 16px; letter-spacing: 0.02em; font-weight: 500; }
+@utility font-label-sm { font-family: var(--font-label-sm); }
+
+/* Custom scrollbar for minimalist feel */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background-color: var(--color-outline-variant); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background-color: var(--color-outline); }
+
+/* Utility to hide standard scrollbar but keep functionality if needed */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@layer utilities {
+    .ml-sidebar-width {
+        margin-left: var(--spacing-sidebar-width);
+    }
+}
+
+::selection { background-color: rgba(76, 93, 115, 0.3); color: var(--color-on-surface); }
+html { scroll-behavior: smooth; }
+@keyframes cascadeFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.animate-cascade-fade { animation: cascadeFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+@keyframes heartBurst { 0% { transform: scale(1); } 50% { transform: scale(1.4); filter: drop-shadow(0 0 8px red); } 100% { transform: scale(1); } }
+.animate-heart-burst { animation: heartBurst 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+

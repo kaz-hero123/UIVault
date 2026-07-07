@@ -6,36 +6,54 @@ use App\Models\Category;
 use App\Models\Tag;
 use App\Models\UiInspiration;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class InboxSorter extends Component
 {
+    use WithPagination;
+
+    public string $mode = 'grid';
     public ?UiInspiration $current = null;
 
     // Form fields
     public string $title = '';
-
     public ?int $category_id = null;
-
-    public string $tagsInput = ''; // comma-separated, e.g. "ui design, branding"
-
+    public string $tagsInput = ''; // comma-separated
     public string $notes = '';
-
     public string $source_url = '';
-
     public bool $is_favorite = false;
 
     public array $skippedIds = [];
 
-    public int $remainingCount = 0;
-
     // Quick-add Category properties
     public bool $showAddCategory = false;
-
     public string $newCategoryName = '';
 
     public function mount()
     {
-        $this->loadNext();
+        // No auto-load next anymore, we start in grid mode.
+    }
+
+    public function selectItem(int $id)
+    {
+        $this->current = UiInspiration::inInbox()->find($id);
+        
+        if ($this->current) {
+            $this->title = $this->current->title ?? '';
+            $this->category_id = $this->current->category_id;
+            $this->tagsInput = $this->current->tags()->pluck('name')->implode(', ');
+            $this->notes = $this->current->notes ?? '';
+            $this->source_url = $this->current->source_url ?? '';
+            $this->is_favorite = $this->current->is_favorite ?? false;
+            $this->mode = 'sort';
+        }
+    }
+
+    public function backToGrid()
+    {
+        $this->resetForm();
+        $this->current = null;
+        $this->mode = 'grid';
     }
 
     public function sort()
@@ -54,8 +72,7 @@ class InboxSorter extends Component
         ]);
 
         $this->syncTags();
-        $this->resetForm();
-        $this->loadNext();
+        $this->backToGrid();
     }
 
     public function skip()
@@ -63,8 +80,7 @@ class InboxSorter extends Component
         if ($this->current) {
             $this->skippedIds[] = $this->current->id;
         }
-        $this->resetForm();
-        $this->loadNext();
+        $this->backToGrid();
     }
 
     public function toggleFavorite()
@@ -90,39 +106,34 @@ class InboxSorter extends Component
             return;
         }
 
-        $this->current->delete();
-        $this->resetForm();
-        $this->loadNext();
+        UiInspiration::destroy($this->current->id);
+        $this->backToGrid();
     }
 
-    /**
-     * Data yang dikirim ke view untuk FE.
-     * - $current: UiInspiration model (atau null kalau inbox kosong)
-     * - $categories: semua kategori untuk dropdown
-     * - $remainingCount: jumlah sisa di inbox
-     */
     public function render()
     {
         $orderCol = 'name';
+        $colName = 'name';
+
+        $inboxItems = [];
+        $remainingCount = 0;
+
+        if ($this->mode === 'grid') {
+            $query = UiInspiration::inInbox()->whereNotIn('id', $this->skippedIds);
+            $remainingCount = (clone $query)->count();
+            $inboxItems = $query->oldest()->paginate(24);
+        } else {
+            $remainingCount = UiInspiration::inInbox()->whereNotIn('id', $this->skippedIds)->count();
+        }
 
         return view('livewire.inbox-sorter', [
-            'categories' => Category::orderBy($orderCol)->get(),
-            'existingTags' => Tag::pluck('name')->toArray(),
+            'categories' => Category::orderBy($orderCol, 'asc')->get(),
+            'existingTags' => Tag::pluck($colName, null)->toArray(),
+            'inboxItems' => $inboxItems,
+            'remainingCount' => $remainingCount,
         ]);
     }
 
-    private function loadNext(): void
-    {
-        $this->current = UiInspiration::inInbox()
-            ->whereNotIn('id', $this->skippedIds)
-            ->oldest()
-            ->first();
-        $this->remainingCount = UiInspiration::inInbox()
-            ->whereNotIn('id', $this->skippedIds)
-            ->count();
-    }
-
-    // Tag normalisasi: trim + lowercase + firstOrCreate
     private function syncTags(): void
     {
         if (! $this->current || blank($this->tagsInput)) {
@@ -130,7 +141,6 @@ class InboxSorter extends Component
         }
 
         $tagIds = Tag::syncManyFromInput($this->tagsInput);
-
         $this->current->tags()->sync($tagIds);
     }
 

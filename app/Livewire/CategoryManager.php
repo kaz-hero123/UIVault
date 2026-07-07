@@ -14,7 +14,7 @@ class CategoryManager extends Component
 
     public function startEdit(int $id): void
     {
-        $category = Category::find($id);
+        $category = Category::find($id, ['*']);
         if ($category) {
             $this->editingId = $category->id;
             $this->editingName = $category->name;
@@ -27,7 +27,7 @@ class CategoryManager extends Component
             return;
         }
 
-        $category = Category::find($this->editingId);
+        $category = Category::find($this->editingId, ['*']);
         if ($category) {
             $name = trim($this->editingName);
             $slug = Str::slug($name);
@@ -35,7 +35,7 @@ class CategoryManager extends Component
             // Validasi agar slug/kategori tidak duplikat dengan yang lain
             $colSlug = 'slug';
             $colId = 'id';
-            $exists = Category::where($colSlug, $slug)
+            $exists = Category::where($colSlug, '=', $slug, 'and')
                 ->where($colId, '!=', $category->id)
                 ->exists();
 
@@ -53,7 +53,7 @@ class CategoryManager extends Component
 
     public function delete(int $id): void
     {
-        $category = Category::find($id);
+        $category = Category::find($id, ['*']);
         if ($category) {
             $category->delete();
         }

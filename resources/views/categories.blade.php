@@ -3,8 +3,7 @@
 @section('title', 'Manage Categories')
 
 @section('content')
-<div>
-    <h1 class="text-xl font-bold mb-4 text-gray-900">Manage Categories</h1>
+<div class="h-full">
     <livewire:category-manager />
 </div>
 @endsection

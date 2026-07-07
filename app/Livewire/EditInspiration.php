@@ -28,7 +28,9 @@ class EditInspiration extends Component
         $this->inspiration = $inspiration;
         $this->title = $inspiration->title ?? '';
         $this->category_id = $inspiration->category_id;
-        $this->tagsInput = $inspiration->tags->pluck('name')->implode(', ');
+        $colName = 'name';
+        $glue = ', ';
+        $this->tagsInput = $inspiration->tags->pluck($colName, null)->implode($glue);
         $this->notes = $inspiration->notes ?? '';
         $this->source_url = $inspiration->source_url ?? '';
         $this->is_favorite = (bool) $inspiration->is_favorite;
@@ -53,10 +55,11 @@ class EditInspiration extends Component
     public function render()
     {
         $orderCol = 'name';
+        $colName = 'name';
 
         return view('livewire.edit-inspiration', [
-            'categories' => Category::orderBy($orderCol)->get(),
-            'existingTags' => Tag::pluck('name')->toArray(),
+            'categories' => Category::orderBy($orderCol, 'asc')->get(),
+            'existingTags' => Tag::pluck($colName, null)->toArray(),
         ]);
     }
 }

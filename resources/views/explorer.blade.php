@@ -1,10 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.app', ['hideTopbar' => true, 'noPadding' => true])
 
 @section('title', 'Explorer')
 
 @section('content')
-<div>
-    <h1 class="text-xl font-bold mb-4">Explorer</h1>
+<div class="h-full">
     <livewire:explorer-grid />
 </div>
 @endsection
