@@ -1,4 +1,4 @@
-<div class="w-full">
+<div class="w-full" x-data="{ previewOpen: false, previewImage: '', previewTitle: '' }" @keydown.escape.window="previewOpen = false">
     <!-- Floating Topbar for Explorer -->
     <header class="bg-surface/70 backdrop-blur-xl fixed w-[calc(100%-260px-64px)] right-8 top-6 flex justify-end items-center h-[72px] px-6 z-30 border border-white/20 rounded-2xl shadow-lg shadow-black/5 transition-all">
         <div class="flex-1 flex items-center max-w-2xl">
@@ -83,7 +83,7 @@
                         <span class="material-symbols-outlined text-[20px]" {!! $item->is_favorite ? 'style="font-variation-settings: \'FILL\' 1;"' : '' !!}>favorite</span>
                     </button>
 
-                    <div class="overflow-hidden rounded-[24px]">
+                    <div class="overflow-hidden rounded-[24px] cursor-pointer" @click="previewImage = '{{ $item->image_url }}'; previewTitle = '{{ addslashes($item->title ?? 'Untitled') }}'; previewOpen = true">
                         <img class="w-full h-auto block object-cover transition-transform duration-700 ease-out group-hover:scale-105" src="{{ $item->image_url }}" alt="{{ $item->title ?? 'Untitled' }}"/>
                     </div>
                     
@@ -134,4 +134,39 @@
             <p class="font-body-lg text-body-lg text-on-surface-variant max-w-sm">Coba ubah kata kunci pencarian atau filter kategori/tag untuk menemukan apa yang Anda cari.</p>
         </div>
     @endif
+
+    <!-- Alpine.js Lightbox Modal -->
+    <div x-show="previewOpen" 
+         style="display: none;"
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-12"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 backdrop-blur-none"
+         x-transition:enter-end="opacity-100 backdrop-blur-xl"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 backdrop-blur-xl"
+         x-transition:leave-end="opacity-0 backdrop-blur-none">
+         
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60" @click="previewOpen = false"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative w-full max-w-5xl max-h-full flex flex-col items-center justify-center"
+             x-transition:enter="transition ease-out duration-300 delay-75"
+             x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+             x-transition:leave-end="opacity-0 scale-95 translate-y-4">
+            
+            <button @click="previewOpen = false" class="absolute -top-12 right-0 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur-md">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            
+            <img :src="previewImage" :alt="previewTitle" class="max-w-full max-h-[85vh] object-contain rounded-[24px] shadow-2xl shadow-black/50" />
+            
+            <div class="mt-6 text-center">
+                <h2 x-text="previewTitle" class="text-white font-display-sm text-display-sm drop-shadow-md"></h2>
+            </div>
+        </div>
+    </div>
 </div>
