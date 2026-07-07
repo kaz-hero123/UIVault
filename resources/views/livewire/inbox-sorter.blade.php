@@ -12,9 +12,34 @@
                 <!-- Masonry Grid for Inbox -->
                 <div class="columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-6 w-full pb-12">
                     @foreach($inboxItems as $item)
-                        <div wire:click="selectItem({{ $item->id }})" class="cursor-pointer relative group rounded-[24px] overflow-hidden bg-surface-container-low mb-6 border border-white/40 shadow-sm shadow-black/5 hover:shadow-xl hover:shadow-black/10 hover:-translate-y-1 transition-all duration-300 break-inside-avoid">
+                        <div wire:click="selectItem({{ $item->id }})" 
+                             x-data="{ 
+                                rotateX: 0, 
+                                rotateY: 0, 
+                                imgLoaded: false,
+                                handleMove(e) { 
+                                    const r = this.$el.getBoundingClientRect(); 
+                                    const cx = r.width / 2; 
+                                    const cy = r.height / 2; 
+                                    this.rotateX = ((e.clientY - r.top - cy) / cy) * -8; 
+                                    this.rotateY = ((e.clientX - r.left - cx) / cx) * 8; 
+                                },
+                                handleLeave() { 
+                                    this.rotateX = 0; 
+                                    this.rotateY = 0; 
+                                } 
+                             }" 
+                             @mousemove="handleMove" 
+                             @mouseleave="handleLeave"
+                             :style="`animation-delay: {{ $loop->index * 60 }}ms; transform: perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg); transition: transform 0.1s ease-out;`"
+                             class="animate-cascade-fade cursor-pointer relative group rounded-[24px] overflow-hidden bg-surface-container-low mb-6 border border-white/40 shadow-sm shadow-black/5 hover:shadow-2xl hover:shadow-black/10 break-inside-avoid origin-center min-h-[150px]">
+                            
+                            <div x-show="!imgLoaded" class="absolute inset-0 bg-surface-variant animate-pulse flex items-center justify-center">
+                                <span class="material-symbols-outlined text-outline-variant/30 text-4xl">image</span>
+                            </div>
+                            
                             <div class="overflow-hidden rounded-[24px]">
-                                <img class="w-full h-auto block object-cover group-hover:scale-105 transition-transform duration-700 ease-out" src="{{ \Illuminate\Support\Facades\Storage::url($item->image_path) }}" alt="Inbox item"/>
+                                <img @load="imgLoaded = true" :class="imgLoaded ? 'opacity-100' : 'opacity-0'" class="w-full h-auto block object-cover group-hover:scale-105 transition-all duration-700 ease-out" src="{{ \Illuminate\Support\Facades\Storage::url($item->image_path) }}" alt="Inbox item"/>
                             </div>
                             
                             <!-- Glassmorphism overlay on hover -->
@@ -58,14 +83,18 @@
             </button>
 
             <!-- Mobile UI Preview Card -->
-            <div class="relative w-full max-w-[420px] aspect-[9/19] rounded-[2.5rem] bg-surface border border-quiet shadow-[0_8px_30px_rgba(0,0,0,0.04)] overflow-hidden transition-transform duration-500 hover:scale-[1.01] hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] flex flex-col">
+            <div x-data="{ imgLoaded: false }" class="relative w-full max-w-[420px] aspect-[9/19] rounded-[2.5rem] bg-surface border border-quiet shadow-[0_8px_30px_rgba(0,0,0,0.04)] overflow-hidden transition-transform duration-500 hover:scale-[1.01] hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] flex flex-col">
                 <!-- Faux Device Top Bar -->
                 <div class="h-12 w-full flex justify-center items-end pb-2 px-6 shrink-0 z-10 absolute top-0 left-0 bg-gradient-to-b from-black/10 to-transparent">
                     <div class="w-1/3 h-6 bg-black/80 rounded-full"></div>
                 </div>
                 
+                <div x-show="!imgLoaded" class="absolute inset-0 bg-surface-variant animate-pulse flex items-center justify-center z-0">
+                    <span class="material-symbols-outlined text-outline-variant/30 text-4xl">image</span>
+                </div>
+                
                 <!-- The Content Image -->
-                <img class="w-full h-full object-cover" src="{{ \Illuminate\Support\Facades\Storage::url($current->image_path) }}" alt="Preview"/>
+                <img @load="imgLoaded = true" :class="imgLoaded ? 'opacity-100' : 'opacity-0'" class="w-full h-full object-cover transition-opacity duration-500 relative z-0" src="{{ \Illuminate\Support\Facades\Storage::url($current->image_path) }}" alt="Preview"/>
             </div>
         </section>
 
@@ -84,10 +113,10 @@
                 <!-- Form Container -->
                 <div class="flex flex-col gap-8 flex-1">
                     
-                    <!-- Field: Title -->
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Title</label>
-                        <input wire:model="title" class="w-full bg-surface-subtle border border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-surface rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface outline-none transition-all placeholder:text-outline-variant shadow-sm" type="text" placeholder="Design Title"/>
+                    <!-- Field: Title (Floating Label) -->
+                    <div class="relative group">
+                        <input wire:model="title" id="title" class="peer w-full bg-surface-subtle border border-transparent focus:border-primary focus:ring-4 focus:ring-primary/10 focus:bg-surface rounded-xl px-4 pt-6 pb-2 font-body-md text-body-md text-on-surface outline-none transition-all placeholder-transparent shadow-sm hover:shadow-md" type="text" placeholder="Design Title"/>
+                        <label for="title" class="absolute left-4 top-3.5 text-on-surface-variant transition-all peer-placeholder-shown:text-body-md peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:font-bold peer-focus:text-primary peer-focus:uppercase opacity-70 pointer-events-none peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:uppercase">Title</label>
                     </div>
                     
                     <!-- Field: Category -->
@@ -137,13 +166,11 @@
                         <textarea wire:model="notes" class="w-full bg-surface-subtle border border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-surface rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface outline-none transition-all placeholder:text-outline-variant resize-none h-32 shadow-sm" placeholder="Add observations or notes..."></textarea>
                     </div>
                     
-                    <!-- Field: Source URL -->
-                    <div>
-                        <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Source URL</label>
-                        <div class="relative flex items-center bg-surface-subtle rounded-lg border border-transparent focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-surface transition-all overflow-hidden shadow-sm">
-                            <span class="material-symbols-outlined pl-4 text-outline-variant text-[20px]">link</span>
-                            <input wire:model="source_url" class="w-full bg-transparent border-none px-3 py-3 font-body-md text-body-md text-on-surface outline-none placeholder:text-outline-variant" type="url" placeholder="https://..."/>
-                        </div>
+                    <!-- Field: Source URL (Floating Label) -->
+                    <div class="relative group">
+                        <input wire:model="source_url" id="source_url" class="peer w-full bg-surface-subtle border border-transparent focus:border-primary focus:ring-4 focus:ring-primary/10 focus:bg-surface rounded-xl pl-10 pr-4 pt-6 pb-2 font-body-md text-body-md text-on-surface outline-none transition-all placeholder-transparent shadow-sm hover:shadow-md" type="url" placeholder="https://..."/>
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[20px] pointer-events-none peer-focus:text-primary transition-colors">link</span>
+                        <label for="source_url" class="absolute left-10 top-3.5 text-on-surface-variant transition-all peer-placeholder-shown:text-body-md peer-placeholder-shown:top-3.5 peer-focus:top-1.5 peer-focus:text-[10px] peer-focus:font-bold peer-focus:text-primary peer-focus:uppercase opacity-70 pointer-events-none peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-[10px] peer-[:not(:placeholder-shown)]:font-bold peer-[:not(:placeholder-shown)]:uppercase">Source URL</label>
                     </div>
                     
                     {{-- Dominant Colors Info if available --}}
@@ -162,8 +189,17 @@
                 <!-- Action Area (Sticky-ish to bottom) -->
                 <div class="mt-8 pt-6 border-t border-quiet shrink-0">
                     <div class="flex gap-4 items-center">
-                        <button type="button" wire:click="delete" onclick="return confirm('Hapus gambar ini?')" class="p-3 text-error border border-transparent hover:border-error hover:bg-error-container/30 rounded-lg transition-colors flex items-center justify-center">
-                            <span class="material-symbols-outlined">delete</span>
+                        <!-- Hold-to-Delete Haptic Button -->
+                        <button type="button" 
+                                x-data="{ timer: null, progress: 0 }" 
+                                @mousedown="timer = setInterval(() => { progress += 10; if (progress >= 100) { clearInterval(timer); @this.delete() } }, 50)" 
+                                @mouseup="clearInterval(timer); progress = 0" 
+                                @mouseleave="clearInterval(timer); progress = 0"
+                                class="relative p-3 text-error border border-transparent hover:border-error hover:bg-error-container/30 rounded-lg transition-colors flex items-center justify-center overflow-hidden w-12 h-12 shrink-0 group select-none shadow-sm hover:shadow-md"
+                                title="Hold to delete">
+                            <!-- Progress fill -->
+                            <div class="absolute bottom-0 left-0 w-full bg-error/20 transition-all duration-75 ease-linear pointer-events-none" :style="`height: ${progress}%`"></div>
+                            <span class="material-symbols-outlined relative z-10 transition-transform group-active:scale-90">delete</span>
                         </button>
                         <button type="button" wire:click="skip" class="flex-[1] bg-transparent text-on-surface border border-outline hover:bg-surface-subtle hover:border-on-surface-variant rounded-lg py-3 font-title-md text-body-md font-medium transition-colors">
                             Skip
