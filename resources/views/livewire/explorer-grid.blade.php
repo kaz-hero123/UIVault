@@ -66,7 +66,26 @@
     @if($inspirations->count() > 0)
         <div wire:loading.class="opacity-50" class="columns-1 sm:columns-2 lg:columns-3 2xl:columns-4 gap-6 px-8 w-full pb-12 transition-opacity duration-300">
             @foreach($inspirations as $item)
-                <div class="relative group rounded-[24px] overflow-hidden bg-surface-container-low mb-6 border border-white/40 shadow-sm shadow-black/5 hover:shadow-xl hover:shadow-black/10 transition-all duration-500 break-inside-avoid">
+                <div x-data="{ 
+                        rotateX: 0, 
+                        rotateY: 0, 
+                        imgLoaded: false,
+                        handleMove(e) { 
+                            const r = this.$el.getBoundingClientRect(); 
+                            const cx = r.width / 2; 
+                            const cy = r.height / 2; 
+                            this.rotateX = ((e.clientY - r.top - cy) / cy) * -8; 
+                            this.rotateY = ((e.clientX - r.left - cx) / cx) * 8; 
+                        },
+                        handleLeave() { 
+                            this.rotateX = 0; 
+                            this.rotateY = 0; 
+                        } 
+                     }" 
+                     @mousemove="handleMove" 
+                     @mouseleave="handleLeave"
+                     :style="`animation-delay: {{ $loop->index * 60 }}ms; transform: perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg); transition: transform 0.1s ease-out;`"
+                     class="animate-cascade-fade relative group rounded-[24px] overflow-hidden bg-surface-container-low mb-6 border border-white/40 shadow-sm shadow-black/5 hover:shadow-2xl hover:shadow-black/10 break-inside-avoid origin-center">
                     
                     {{-- Edit/Delete Actions overlay at top left --}}
                     <div class="absolute top-4 left-4 z-20 flex gap-2 opacity-0 -translate-y-2 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
@@ -79,12 +98,16 @@
                     </div>
 
                     {{-- Favorite Button overlay at top right --}}
-                    <button wire:click="toggleFavorite({{ $item->id }})" class="absolute top-4 right-4 z-20 w-9 h-9 rounded-full backdrop-blur-md transition-all duration-300 flex items-center justify-center shadow-sm {{ $item->is_favorite ? 'bg-white/90 text-error opacity-100' : 'bg-black/20 text-white hover:bg-white/90 hover:text-error opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0' }}">
+                    <button wire:click="toggleFavorite({{ $item->id }})" class="absolute top-4 right-4 z-20 w-9 h-9 rounded-full backdrop-blur-md transition-all duration-300 flex items-center justify-center shadow-sm {{ $item->is_favorite ? 'bg-white/90 text-error opacity-100 animate-heart-burst' : 'bg-black/20 text-white hover:bg-white/90 hover:text-error opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0' }}">
                         <span class="material-symbols-outlined text-[20px]" {!! $item->is_favorite ? 'style="font-variation-settings: \'FILL\' 1;"' : '' !!}>favorite</span>
                     </button>
 
-                    <div class="overflow-hidden rounded-[24px] cursor-pointer" @click="previewImage = '{{ $item->image_url }}'; previewTitle = '{{ addslashes($item->title ?? 'Untitled') }}'; previewOpen = true">
-                        <img class="w-full h-auto block object-cover transition-transform duration-700 ease-out group-hover:scale-105" src="{{ $item->image_url }}" alt="{{ $item->title ?? 'Untitled' }}"/>
+                    <div class="overflow-hidden rounded-[24px] cursor-pointer relative min-h-[150px]" @click="previewImage = '{{ $item->image_url }}'; previewTitle = '{{ addslashes($item->title ?? 'Untitled') }}'; previewOpen = true">
+                        <!-- Skeleton Loading -->
+                        <div x-show="!imgLoaded" class="absolute inset-0 bg-surface-variant animate-pulse flex items-center justify-center">
+                            <span class="material-symbols-outlined text-outline-variant/30 text-4xl">image</span>
+                        </div>
+                        <img @load="imgLoaded = true" :class="imgLoaded ? 'opacity-100' : 'opacity-0'" class="w-full h-auto block object-cover transition-all duration-700 ease-out group-hover:scale-105" src="{{ $item->image_url }}" alt="{{ $item->title ?? 'Untitled' }}"/>
                     </div>
                     
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 pointer-events-none rounded-[24px]">
