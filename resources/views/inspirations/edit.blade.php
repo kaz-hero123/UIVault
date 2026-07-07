@@ -1,10 +1,13 @@
-@extends('layouts.app')
+@extends('layouts.app', [
+    'bodyClass' => 'bg-background text-on-background font-body-md antialiased h-screen overflow-hidden flex',
+    'noPadding' => true,
+    'hideTopbar' => true
+])
 
 @section('title', 'Edit Inspiration')
 
 @section('content')
-<div>
-    <h1 class="text-xl font-bold mb-4 text-gray-900">Edit Inspiration</h1>
+<div class="flex-1 flex h-screen bg-background w-full">
     <livewire:edit-inspiration :inspiration="$inspiration" />
 </div>
 @endsection
