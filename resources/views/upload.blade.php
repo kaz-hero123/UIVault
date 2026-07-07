@@ -30,19 +30,27 @@
             <div class="flex flex-col gap-3">
                 <label for="images" class="font-label-md text-label-md text-on-surface">Select Files</label>
                 
-                <div class="relative group cursor-pointer">
+                <div x-data="{ isDragging: false }" class="relative group cursor-pointer">
                     <input
                         type="file"
                         id="images"
                         name="images[]"
                         multiple
                         accept="image/jpeg,image/png,image/gif,image/webp"
-                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                        @dragover.prevent="isDragging = true"
+                        @dragleave.prevent="isDragging = false"
+                        @drop="isDragging = false"
+                        @change="isDragging = false"
                     />
                     
-                    <div class="border-2 border-dashed border-outline-variant group-hover:border-primary group-hover:bg-primary-container/10 transition-all duration-300 group-hover:scale-[1.01] group-hover:shadow-sm rounded-xl p-12 flex flex-col items-center justify-center text-center gap-3">
-                        <span class="material-symbols-outlined text-[48px] text-outline-variant group-hover:text-primary transition-all duration-300 group-hover:-translate-y-1">cloud_upload</span>
-                        <div>
+                    <div :class="{ 'border-primary bg-primary/10 scale-[1.02] shadow-lg ring-4 ring-primary/30': isDragging, 'border-outline-variant group-hover:border-primary group-hover:bg-primary-container/10 group-hover:scale-[1.01] group-hover:shadow-sm': !isDragging }" class="border-2 border-dashed transition-all duration-300 rounded-xl p-12 flex flex-col items-center justify-center text-center gap-3 relative overflow-hidden">
+                        
+                        <!-- Pulse Ring Effect when Dragging -->
+                        <div x-show="isDragging" x-transition.opacity class="absolute inset-0 rounded-xl border-[6px] border-primary animate-ping opacity-20 pointer-events-none"></div>
+
+                        <span :class="isDragging ? 'text-primary scale-125 -translate-y-2' : 'text-outline-variant group-hover:text-primary group-hover:-translate-y-1'" class="material-symbols-outlined text-[48px] transition-all duration-300 relative z-10">cloud_upload</span>
+                        <div class="relative z-10 transition-transform duration-300" :class="{ 'translate-y-1': isDragging }">
                             <span class="font-title-md text-title-md text-on-surface block mb-1">Click to browse or drag files here</span>
                             <span class="font-body-sm text-body-sm text-on-surface-variant">Support JPG, PNG, GIF, WebP format</span>
                         </div>
