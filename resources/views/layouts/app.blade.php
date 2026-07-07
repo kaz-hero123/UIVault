@@ -11,7 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 </head>
-<body class="{{ $bodyClass ?? 'bg-background text-on-surface font-body-md antialiased min-h-screen flex overflow-x-hidden' }}">
+<body class="{{ $bodyClass ?? 'bg-background text-on-surface font-body-md antialiased min-h-screen flex overflow-x-hidden relative' }}">
+
+    <!-- Ambient Background Glow (Premium Effect) -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+        <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-primary/5 blur-[120px]"></div>
+        <div class="absolute top-[60%] -right-[10%] w-[40%] h-[60%] rounded-full bg-secondary-container/30 blur-[120px]"></div>
+    </div>
 
     <x-sidebar />
 
