@@ -108,6 +108,6 @@
 
 @layer utilities {
     .ml-sidebar-width {
-        margin-left: var(--sidebar-width);
+        margin-left: var(--spacing-sidebar-width);
     }
 }
