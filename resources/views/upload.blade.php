@@ -40,8 +40,8 @@
                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
                     
-                    <div class="border-2 border-dashed border-outline-variant group-hover:border-primary group-hover:bg-primary-container/10 transition-colors rounded-xl p-12 flex flex-col items-center justify-center text-center gap-3">
-                        <span class="material-symbols-outlined text-[48px] text-outline-variant group-hover:text-primary transition-colors">cloud_upload</span>
+                    <div class="border-2 border-dashed border-outline-variant group-hover:border-primary group-hover:bg-primary-container/10 transition-all duration-300 group-hover:scale-[1.01] group-hover:shadow-sm rounded-xl p-12 flex flex-col items-center justify-center text-center gap-3">
+                        <span class="material-symbols-outlined text-[48px] text-outline-variant group-hover:text-primary transition-all duration-300 group-hover:-translate-y-1">cloud_upload</span>
                         <div>
                             <span class="font-title-md text-title-md text-on-surface block mb-1">Click to browse or drag files here</span>
                             <span class="font-body-sm text-body-sm text-on-surface-variant">Support JPG, PNG, GIF, WebP format</span>
@@ -52,8 +52,8 @@
 
             <!-- Submit Button -->
             <div class="pt-4 border-t border-quiet">
-                <button type="submit" class="w-full bg-primary text-on-primary py-4 rounded-xl hover:bg-primary-container hover:text-on-primary-container font-title-md text-title-md transition-all shadow-sm flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined">send</span>
+                <button type="submit" class="w-full bg-primary text-on-primary py-4 rounded-xl hover:bg-primary-container hover:text-on-primary-container font-title-md text-title-md transition-all duration-300 shadow-sm hover:shadow-md active:scale-[0.98] flex items-center justify-center gap-2 group">
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform duration-300">send</span>
                     <span>Upload to Inbox</span>
                 </button>
             </div>
