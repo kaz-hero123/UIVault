@@ -8,7 +8,7 @@
     <!-- Main Navigation -->
     <div class="flex-1 flex flex-col gap-2 w-full">
         <!-- Explorer -->
-        <a class="relative flex items-center gap-3 py-3 px-4 mx-4 rounded-xl transition-all duration-300 group {{ request()->is('explorer*') || request()->is('/') ? 'text-primary bg-primary/10 font-medium' : 'text-on-surface-variant hover:bg-surface-subtle hover:text-on-surface' }}" href="{{ route('explorer') }}">
+        <a class="relative flex items-center gap-3 py-3 px-4 mx-4 rounded-xl transition-all duration-300 group {{ request()->is('explorer*') || request()->is('/') ? 'text-primary bg-primary/10 font-medium' : 'text-on-surface-variant hover:bg-surface-subtle hover:text-on-surface' }}" href="{{ route('explorer') }}" wire:navigate>
             @if(request()->is('explorer*') || request()->is('/'))
                 <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-primary rounded-r-full shadow-[0_0_8px_rgba(0,0,0,0.1)]"></div>
             @endif
@@ -17,7 +17,7 @@
         </a>
         
         <!-- Inbox -->
-        <a class="relative flex items-center gap-3 py-3 px-4 mx-4 rounded-xl transition-all duration-300 group {{ request()->is('inbox*') ? 'text-primary bg-primary/10 font-medium' : 'text-on-surface-variant hover:bg-surface-subtle hover:text-on-surface' }}" href="{{ route('inbox') }}">
+        <a class="relative flex items-center gap-3 py-3 px-4 mx-4 rounded-xl transition-all duration-300 group {{ request()->is('inbox*') ? 'text-primary bg-primary/10 font-medium' : 'text-on-surface-variant hover:bg-surface-subtle hover:text-on-surface' }}" href="{{ route('inbox') }}" wire:navigate>
             @if(request()->is('inbox*'))
                 <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-primary rounded-r-full shadow-[0_0_8px_rgba(0,0,0,0.1)]"></div>
             @endif
@@ -26,7 +26,7 @@
         </a>
 
         <!-- Upload -->
-        <a class="relative flex items-center gap-3 py-3 px-4 mx-4 rounded-xl transition-all duration-300 group {{ request()->is('upload*') ? 'text-primary bg-primary/10 font-medium' : 'text-on-surface-variant hover:bg-surface-subtle hover:text-on-surface' }}" href="{{ route('upload.create') }}">
+        <a class="relative flex items-center gap-3 py-3 px-4 mx-4 rounded-xl transition-all duration-300 group {{ request()->is('upload*') ? 'text-primary bg-primary/10 font-medium' : 'text-on-surface-variant hover:bg-surface-subtle hover:text-on-surface' }}" href="{{ route('upload.create') }}" wire:navigate>
             @if(request()->is('upload*'))
                 <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-primary rounded-r-full shadow-[0_0_8px_rgba(0,0,0,0.1)]"></div>
             @endif
@@ -35,7 +35,7 @@
         </a>
         
         <!-- Categories -->
-        <a class="relative flex items-center gap-3 py-3 px-4 mx-4 rounded-xl transition-all duration-300 group {{ request()->is('categories*') ? 'text-primary bg-primary/10 font-medium' : 'text-on-surface-variant hover:bg-surface-subtle hover:text-on-surface' }}" href="{{ route('categories') }}">
+        <a class="relative flex items-center gap-3 py-3 px-4 mx-4 rounded-xl transition-all duration-300 group {{ request()->is('categories*') ? 'text-primary bg-primary/10 font-medium' : 'text-on-surface-variant hover:bg-surface-subtle hover:text-on-surface' }}" href="{{ route('categories') }}" wire:navigate>
             @if(request()->is('categories*'))
                 <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-primary rounded-r-full shadow-[0_0_8px_rgba(0,0,0,0.1)]"></div>
             @endif
@@ -46,7 +46,7 @@
 
     <!-- CTA Area -->
     <div class="px-6 mt-8 mb-4">
-        <a href="{{ route('upload.create') }}" class="w-full bg-primary text-on-primary font-title-md text-title-md py-3 rounded-lg flex items-center justify-center space-x-2 hover:bg-opacity-90 transition-all opacity-80 hover:opacity-100 shadow-sm">
+        <a href="{{ route('upload.create') }}" wire:navigate class="w-full bg-primary text-on-primary font-title-md text-title-md py-3 rounded-lg flex items-center justify-center space-x-2 hover:bg-opacity-90 transition-all opacity-80 hover:opacity-100 shadow-sm hover:scale-[1.02]">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
             <span>Upload</span>
         </a>
