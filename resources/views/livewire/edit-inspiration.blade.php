@@ -37,14 +37,14 @@
                 <!-- Field: Title -->
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Title</label>
-                    <input wire:model="title" class="w-full bg-surface-subtle border-b-2 border-transparent focus:border-primary focus:bg-surface rounded-t-lg px-4 py-3 font-body-md text-body-md text-on-surface outline-none transition-all placeholder:text-outline-variant" type="text" placeholder="Design Title"/>
+                    <input wire:model="title" class="w-full bg-surface-subtle border border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-surface rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface outline-none transition-all placeholder:text-outline-variant shadow-sm" type="text" placeholder="Design Title"/>
                 </div>
                 
                 <!-- Field: Category -->
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Category</label>
                     <div class="relative">
-                        <select wire:model="category_id" class="w-full bg-surface-subtle border-b-2 border-transparent focus:border-primary focus:bg-surface rounded-t-lg px-4 py-3 font-body-md text-body-md text-on-surface outline-none transition-all appearance-none cursor-pointer">
+                        <select wire:model="category_id" class="w-full bg-surface-subtle border border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-surface rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface outline-none transition-all appearance-none cursor-pointer shadow-sm">
                             <option value="">-- Choose Category --</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -57,7 +57,7 @@
                 <!-- Field: Tags -->
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Tags (Comma separated)</label>
-                    <div class="flex flex-wrap gap-2 p-3 bg-surface-subtle rounded-lg border border-transparent focus-within:border-primary/30 focus-within:bg-surface transition-all min-h-[56px] items-center">
+                    <div class="flex flex-wrap gap-2 p-3 bg-surface-subtle rounded-lg border border-transparent focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-surface transition-all min-h-[56px] items-center shadow-sm">
                         <input wire:model="tagsInput" list="existing-tags" class="bg-transparent border-none outline-none font-body-md text-body-md text-on-surface placeholder:text-outline-variant flex-1 min-w-[120px] px-1 py-1" placeholder="dashboard, minimal, login..." type="text"/>
                         <datalist id="existing-tags">
                             @foreach($existingTags as $tag)
@@ -70,13 +70,13 @@
                 <!-- Field: Notes -->
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Notes</label>
-                    <textarea wire:model="notes" class="w-full bg-surface-subtle border border-transparent focus:border-primary/30 focus:bg-surface rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface outline-none transition-all placeholder:text-outline-variant resize-none h-32" placeholder="Add observations or notes..."></textarea>
+                    <textarea wire:model="notes" class="w-full bg-surface-subtle border border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-surface rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface outline-none transition-all placeholder:text-outline-variant resize-none h-32 shadow-sm" placeholder="Add observations or notes..."></textarea>
                 </div>
                 
                 <!-- Field: Source URL -->
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2">Source URL</label>
-                    <div class="relative flex items-center bg-surface-subtle rounded-lg border border-transparent focus-within:border-primary/30 focus-within:bg-surface transition-all overflow-hidden">
+                    <div class="relative flex items-center bg-surface-subtle rounded-lg border border-transparent focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-surface transition-all overflow-hidden shadow-sm">
                         <span class="material-symbols-outlined pl-4 text-outline-variant text-[20px]">link</span>
                         <input wire:model="source_url" class="w-full bg-transparent border-none px-3 py-3 font-body-md text-body-md text-on-surface outline-none placeholder:text-outline-variant" type="url" placeholder="https://..."/>
                     </div>
