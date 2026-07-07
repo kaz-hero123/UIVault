@@ -1,4 +1,4 @@
-@extends('layouts.app', ['hideTopbar' => true])
+@extends('layouts.app', ['hideTopbar' => true, 'noPadding' => true])
 
 @section('title', 'Explorer')
 
