@@ -21,6 +21,7 @@ class InboxSorterTest extends TestCase
         ]);
 
         Livewire::test(InboxSorter::class)
+            ->call('selectItem', $item->id)
             ->set('title', 'Awesome Design')
             ->set('category_id', $category->id)
             ->set('tagsInput', 'UI Design, mobile, UI DESIGN ')
@@ -52,9 +53,11 @@ class InboxSorterTest extends TestCase
         $item2 = UiInspiration::factory()->create(['status' => 'inbox', 'created_at' => now()]);
 
         Livewire::test(InboxSorter::class)
+            ->call('selectItem', $item1->id)
             ->assertSet('current.id', $item1->id)
             ->call('skip')
-            ->assertSet('current.id', $item2->id);
+            ->assertSet('current', null)
+            ->assertSet('mode', 'grid');
 
         $item1->refresh();
         $this->assertEquals('inbox', $item1->status);
@@ -86,9 +89,11 @@ class InboxSorterTest extends TestCase
         $item2 = UiInspiration::factory()->create(['status' => 'inbox', 'created_at' => now()]);
 
         Livewire::test(InboxSorter::class)
+            ->call('selectItem', $item1->id)
             ->assertSet('current.id', $item1->id)
             ->call('delete')
-            ->assertSet('current.id', $item2->id);
+            ->assertSet('current', null)
+            ->assertSet('mode', 'grid');
 
         $this->assertDatabaseMissing('ui_inspirations', ['id' => $item1->id]);
     }

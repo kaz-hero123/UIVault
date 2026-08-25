@@ -119,11 +119,11 @@ class InboxSorter extends Component
         $remainingCount = 0;
 
         if ($this->mode === 'grid') {
-            $query = UiInspiration::inInbox()->whereNotIn('id', $this->skippedIds);
+            $query = UiInspiration::inInbox()->whereNotIn('id', $this->skippedIds, 'and');
             $remainingCount = (clone $query)->count();
             $inboxItems = $query->oldest()->paginate(24);
         } else {
-            $remainingCount = UiInspiration::inInbox()->whereNotIn('id', $this->skippedIds)->count();
+            $remainingCount = UiInspiration::inInbox()->whereNotIn('id', $this->skippedIds, 'and')->count();
         }
 
         return view('livewire.inbox-sorter', [
